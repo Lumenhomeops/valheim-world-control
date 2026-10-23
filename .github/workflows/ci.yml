@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scan-and-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan for secrets and private infrastructure
+        shell: pwsh
+        run: ./scripts/check-secrets.ps1
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Build host agent
+        run: dotnet build control/src/LumenGame.Agent/LumenGame.Agent.csproj -c Release
+      - name: Build control API
+        run: dotnet build control/src/LumenGame.Api/LumenGame.Api.csproj -c Release
+      - name: Build Windows dashboard
+        run: dotnet build control/src/LumenGame.Windows/LumenGame.Windows.csproj -c Release
+
+  containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Compose model
+        env:
+          VWC_SERVER_ENV_FILE: examples/server.env.example
+        run: docker compose config --quiet
+      - name: Build runtime and API images
+        env:
+          VWC_SERVER_ENV_FILE: examples/server.env.example
+        run: docker compose build
+
