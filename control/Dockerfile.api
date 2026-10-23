@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+COPY Directory.Build.props ./
+COPY src/LumenGame.Contracts/LumenGame.Contracts.csproj src/LumenGame.Contracts/
+COPY src/LumenGame.Api/LumenGame.Api.csproj src/LumenGame.Api/
+RUN dotnet restore src/LumenGame.Api/LumenGame.Api.csproj
+COPY src/LumenGame.Contracts/ src/LumenGame.Contracts/
+COPY src/LumenGame.Api/ src/LumenGame.Api/
+RUN dotnet publish src/LumenGame.Api/LumenGame.Api.csproj -c Release --no-restore -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /app
+COPY --from=build /app/ .
+EXPOSE 8443
+ENTRYPOINT ["dotnet", "ValheimWorldControl.Api.dll"]

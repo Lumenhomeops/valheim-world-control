@@ -1,0 +1,125 @@
+<Window x:Class="LumenGame.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Valheim World Control" Width="1060" Height="760" MinWidth="850" MinHeight="650"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="{StaticResource PageBrush}">
+    <Grid>
+        <Grid x:Name="LoginView">
+            <Border Width="430" Padding="30" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <Border Width="54" Height="54" Background="{StaticResource BlueBrush}" CornerRadius="12" HorizontalAlignment="Left" Margin="0,0,0,18">
+                        <TextBlock Text="V" Foreground="White" FontSize="28" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="Valheim World Control" FontSize="25" FontWeight="SemiBold" />
+                    <TextBlock Text="Sign in to your self-hosted server dashboard." Foreground="{StaticResource MutedBrush}" Margin="0,5,0,22" />
+                    <TextBlock Text="Server API" FontWeight="SemiBold" Margin="0,0,0,5" />
+                    <TextBox x:Name="EndpointBox" Text="https://valheim.example.com:8443/" MinHeight="38" Padding="8" Margin="0,0,0,13" />
+                    <TextBlock Text="Username" FontWeight="SemiBold" Margin="0,0,0,5" />
+                    <TextBox x:Name="UserNameBox" Text="admin" MinHeight="38" Padding="8" Margin="0,0,0,13" />
+                    <TextBlock Text="Password" FontWeight="SemiBold" Margin="0,0,0,5" />
+                    <PasswordBox x:Name="PasswordInput" MinHeight="38" Padding="8" Margin="0,0,0,18" />
+                    <Button x:Name="SignInButton" Content="Sign in" Style="{StaticResource PrimaryButton}" Click="SignIn_Click" Margin="0" />
+                    <TextBlock x:Name="LoginMessage" Foreground="#B42318" TextWrapping="Wrap" Margin="0,13,0,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="DashboardView" Visibility="Collapsed">
+            <Grid.RowDefinitions><RowDefinition Height="66" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="{StaticResource NavyBrush}">
+                <Grid Margin="20,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="36" Height="36" Background="#53A8FF" CornerRadius="8"><TextBlock Text="V" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                        <TextBlock Text="Valheim World Control" Foreground="White" FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center" Margin="11,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock x:Name="RoleLabel" Foreground="White" VerticalAlignment="Center" Margin="0,0,14,0" />
+                        <Button Content="Refresh" Click="Refresh_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="25">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Valheim server" FontSize="25" FontWeight="SemiBold" />
+                            <TextBlock x:Name="AddressLabel" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" />
+                            <TextBlock x:Name="RunningSelectionLabel" Foreground="#166534" FontWeight="SemiBold" Margin="0,5,0,0" />
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="#E7F7EE" BorderBrush="#75C995" BorderThickness="1" CornerRadius="7" Padding="13,8" VerticalAlignment="Center">
+                            <TextBlock x:Name="StateLabel" Foreground="#166534" FontWeight="SemiBold" />
+                        </Border>
+                    </Grid>
+
+                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,20,0,0">
+                        <StackPanel>
+                            <TextBlock Text="1. Choose a world" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Text="Library entries remain distinct even when in-game filenames match." Foreground="{StaticResource MutedBrush}" Margin="0,3,0,8" />
+                            <ListBox x:Name="WorldList" SelectionChanged="WorldList_SelectionChanged" BorderThickness="0" Background="Transparent" ItemContainerStyle="{StaticResource SoftList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" HorizontalAlignment="Center" /><TextBlock Text="{Binding RuntimeName, StringFormat=Runtime: {0}}" Foreground="{StaticResource MutedBrush}" FontSize="11" HorizontalAlignment="Center" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="2. Choose a gameplay profile" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,8" />
+                            <ListBox x:Name="ProfileList" BorderThickness="0" Background="Transparent" ItemContainerStyle="{StaticResource SoftList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" /></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="3. Choose world modifiers" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Text="These switches can be combined with any vanilla gameplay profile." Foreground="{StaticResource MutedBrush}" Margin="0,3,0,10" />
+                            <CheckBox x:Name="PlayerBasedRaidsCheckBox" Content="Player-Based Raids" FontWeight="SemiBold" Margin="0,0,0,8" />
+                            <TextBlock Text="Raid progression follows the players present instead of the world's shared boss progression." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="24,-5,0,9" />
+                            <CheckBox x:Name="PassiveEnemiesCheckBox" Content="Passive Enemies" FontWeight="SemiBold" />
+                            <TextBlock Text="Enemies remain passive until a player attacks or otherwise provokes them." Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="24,3,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="4. Choose a tested mod pack" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,8" />
+                            <ListBox x:Name="ModPackList" BorderThickness="0" Background="Transparent" ItemContainerStyle="{StaticResource SoftList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" HorizontalAlignment="Center" /><TextBlock Text="{Binding Version, StringFormat=Version {0}}" Foreground="{StaticResource MutedBrush}" FontSize="11" HorizontalAlignment="Center" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="AdminUsersPanel" Visibility="Collapsed" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="User access" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Text="Create a read-only login, or enter an existing username to replace its password." Foreground="{StaticResource MutedBrush}" Margin="0,3,0,10" />
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBox x:Name="NewUserNameBox" MinHeight="38" Padding="8" Margin="0,0,8,0" ToolTip="Username" />
+                                <PasswordBox x:Name="NewUserPasswordBox" Grid.Column="1" MinHeight="38" Padding="8" Margin="0,0,8,0" ToolTip="Password (12+ characters)" />
+                                <Button x:Name="SaveUserButton" Grid.Column="2" Content="Save User" Style="{StaticResource PrimaryButton}" Click="SaveUser_Click" />
+                            </Grid>
+                            <TextBlock x:Name="UserMessage" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Margin="0,18,0,8">
+                        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <TextBlock x:Name="ActionMessage" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" Margin="0,0,18,0" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button x:Name="CopyAddressButton" Content="Copy server address" Click="CopyAddress_Click" />
+                            <Button x:Name="ActivateButton" Content="Activate selection" Style="{StaticResource PrimaryButton}" Click="Activate_Click" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

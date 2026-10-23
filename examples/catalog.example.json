@@ -1,0 +1,44 @@
+{
+  "worlds": [
+    {
+      "id": "meadows",
+      "displayName": "Meadows",
+      "runtimeName": "Meadows",
+      "databaseBytes": 0,
+      "profiles": [
+        { "id": "normal", "displayName": "Normal", "isOriginal": true },
+        { "id": "casual", "displayName": "Casual", "isOriginal": false },
+        { "id": "easy", "displayName": "Easy", "isOriginal": false },
+        { "id": "hard", "displayName": "Hard", "isOriginal": false },
+        { "id": "hardcore", "displayName": "Hardcore", "isOriginal": false },
+        { "id": "immersive", "displayName": "Immersive", "isOriginal": false },
+        { "id": "hammer-mode", "displayName": "Hammer Mode", "isOriginal": false }
+      ]
+    },
+    {
+      "id": "second-world",
+      "displayName": "Second World",
+      "runtimeName": "SecondWorld",
+      "databaseBytes": 0,
+      "passwordSecretId": "second-world",
+      "profiles": [
+        { "id": "normal", "displayName": "Normal", "isOriginal": true },
+        { "id": "casual", "displayName": "Casual", "isOriginal": false },
+        { "id": "easy", "displayName": "Easy", "isOriginal": false },
+        { "id": "hard", "displayName": "Hard", "isOriginal": false },
+        { "id": "hardcore", "displayName": "Hardcore", "isOriginal": false },
+        { "id": "immersive", "displayName": "Immersive", "isOriginal": false },
+        { "id": "hammer-mode", "displayName": "Hammer Mode", "isOriginal": false }
+      ]
+    }
+  ],
+  "modPacks": [
+    {
+      "id": "vanilla",
+      "displayName": "Vanilla",
+      "version": "1",
+      "requiresClientProfile": false,
+      "clientProfileFile": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[Unit]
+Description=Valheim World Control transactional host agent
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+User=valheim-control
+Group=valheim-control
+SupplementaryGroups=docker
+EnvironmentFile=/etc/valheim-world-control/agent.env
+RuntimeDirectory=valheim-world-control
+RuntimeDirectoryMode=0750
+RuntimeDirectoryPreserve=yes
+ExecStart=/opt/valheim-world-control/bin/ValheimWorldControl.Agent
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/srv/valheim-world-control /run/valheim-world-control
+UMask=0007
+
+[Install]
+WantedBy=multi-user.target
