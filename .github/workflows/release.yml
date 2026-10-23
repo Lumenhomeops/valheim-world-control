@@ -20,21 +20,25 @@ jobs:
           dotnet publish control/src/LumenGame.Agent/LumenGame.Agent.csproj
           -c Release -r linux-x64 --self-contained true
           -p:PublishSingleFile=true -p:PublishTrimmed=false
-          -o artifacts/linux
+          -o artifacts/publish/linux-agent
       - name: Publish Windows dashboard
         run: >-
           dotnet publish control/src/LumenGame.Windows/LumenGame.Windows.csproj
           -c Release -r win-x64 --self-contained true
           -p:PublishSingleFile=true -p:PublishTrimmed=false
-          -o artifacts/windows
+          -o artifacts/publish/windows
       - name: Assemble release archives
         run: |
-          cp deploy/valheim-world-control-agent.service artifacts/linux/
-          cp compose.yaml .env.example README.md LICENSE NOTICE artifacts/linux/
-          cp -R runtime control examples docs artifacts/linux/
-          cp deploy/Install.cmd deploy/Install-ValheimWorldControl.ps1 artifacts/windows/
-          (cd artifacts/linux && tar -czf ../valheim-world-control-linux-x64.tar.gz .)
-          (cd artifacts/windows && zip -r ../valheim-world-control-windows-x64.zip .)
+          mkdir -p artifacts/linux-package/bin artifacts/linux-package/control artifacts/windows-package
+          cp artifacts/publish/linux-agent/ValheimWorldControl.Agent artifacts/linux-package/bin/
+          cp deploy/valheim-world-control-agent.service artifacts/linux-package/
+          cp compose.yaml .env.example README.md LICENSE NOTICE artifacts/linux-package/
+          rsync -a --exclude='bin/' --exclude='obj/' control/ artifacts/linux-package/control/
+          cp -R runtime examples docs scripts tools artifacts/linux-package/
+          cp artifacts/publish/windows/ValheimWorldControl.exe artifacts/windows-package/
+          cp deploy/Install.cmd deploy/Install-ValheimWorldControl.ps1 artifacts/windows-package/
+          (cd artifacts/linux-package && tar -czf ../valheim-world-control-linux-x64.tar.gz .)
+          (cd artifacts/windows-package && zip -r ../valheim-world-control-windows-x64.zip .)
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,4 +48,5 @@ jobs:
           artifacts/valheim-world-control-windows-x64.zip
           --verify-tag --generate-notes
           --title "Valheim World Control $GITHUB_REF_NAME"
+
 
