@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish Linux host agent
+        run: >-
+          dotnet publish control/src/LumenGame.Agent/LumenGame.Agent.csproj
+          -c Release -r linux-x64 --self-contained true
+          -p:PublishSingleFile=true -p:PublishTrimmed=false
+          -o artifacts/linux
+      - name: Publish Windows dashboard
+        run: >-
+          dotnet publish control/src/LumenGame.Windows/LumenGame.Windows.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:PublishTrimmed=false
+          -o artifacts/windows
+      - name: Assemble release archives
+        run: |
+          cp deploy/valheim-world-control-agent.service artifacts/linux/
+          cp compose.yaml .env.example README.md LICENSE NOTICE artifacts/linux/
+          cp -R runtime control examples docs artifacts/linux/
+          cp deploy/Install.cmd deploy/Install-ValheimWorldControl.ps1 artifacts/windows/
+          (cd artifacts/linux && tar -czf ../valheim-world-control-linux-x64.tar.gz .)
+          (cd artifacts/windows && zip -r ../valheim-world-control-windows-x64.zip .)
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          artifacts/valheim-world-control-linux-x64.tar.gz
+          artifacts/valheim-world-control-windows-x64.zip
+          --verify-tag --generate-notes
+          --title "Valheim World Control $GITHUB_REF_NAME"
+
